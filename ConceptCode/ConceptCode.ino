@@ -1,6 +1,5 @@
 //This is just a test code for the feeder. Look at the homing step mentioned on line 78 for doing precise homing
 
-
 // Include the DRV8834 library
 #include <DRV8834.h>
 
@@ -16,10 +15,6 @@
 
 // Define the pin number for the endstop switch
 #define ENDSTOP 2
-
-// Define the pin numbers for the M0 and M1 pins
-#define M0 10
-#define M1 11
 
 // Create instances of the DRV8834 stepper motor drivers for A-axis and E-axis
 DRV8834 E(MOTOR_STEPS, A1, A0, 38);
