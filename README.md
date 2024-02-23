@@ -20,8 +20,6 @@ This is the initial design undergoing refinements. The integration code for 3D p
 
 # Demo Video
 
-<p align="center">
-   <img src="https://img.youtube.com/vi/IvIK14vktVs/0.jpg" alt="TetraFlow MMU Demo">
-</p>
-
-
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=IvIK14vktVs"><img src="https://img.youtube.com/vi/IvIK14vktVs/0.jpg" alt="IMAGE ALT TEXT"></a>
+</div>
