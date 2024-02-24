@@ -26,7 +26,10 @@ This is the initial design undergoing refinements. The integration code for 3D p
 **G-Code Commands:**
 
 - `<G28>`: Home command. Calls the `home()` function to home the printer.
-- `<G1>` or `<G0>`: Movement commands. Extrudes or retracts filament based on the input value.
+- `<G1>` or `<G0>`: Movement commands. Extrudes or retracts filament based on the input value. Accepts an optional E variable for filament extrusion/retraction. For example, `<G1 E10>` moves and extrudes filament by 10 units.
+- `<G2>`: Arc movement command. Similar to G1 but moves along a curved path in a clockwise direction. Also accepts an optional E variable for filament extrusion.
+- `<G900>`: Command to park the tool head. Calls the `parkToolHead()` function.
+- `<G901>`: Command to unpark the tool head. Calls the `unParkToolHead()` function.
 
 **T-Code Commands:**
 
