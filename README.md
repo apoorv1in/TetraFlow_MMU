@@ -6,7 +6,7 @@
 
 *TetraFlow MMU*: A Multi-Material Unit for 3D Printers
 
-TetraFlow MMU is a 4-color MMU inspired by the innovative 3dChameleon MMU. Utilizing a unique cam design, it seamlessly switches between filaments. The compact and simple design, thanks to the cam mechanism, includes a 4-to-1 Y splitter with an integrated filament sensor. Additionally, the MMU features homing functionality for precise and reliable filament switching.
+TetraFlow MMU is a 4-color MMU inspired by the innovative 3dChameleon MMU. Utilizing a unique cam design, it seamlessly switches between filaments. The compact and simple design, thanks to the cam mechanism, includes a 4-to-1 Y splitter with an integrated filament sensor. Additionally, the MMU features homing functionality for precise and reliable filament switching. MMU supports both sensorless homing for TMC (TMC2209) drivers and homing using a limit switch.
 
 <p align="center">
     <img width=500 src="Images/render.png" alt="cad render">
