@@ -26,12 +26,7 @@ TMC2209Stepper driverE(&TMC_SERIAL, R_SENSE, E_DRIVER_ADDRESS);
 
 bool stalled_A = false;
 bool stalled_E = false;
-
-//int aDir = false;
-//int eDir = false;
 bool parked = false;
-
-//bool dir;
 
 void stallInterruptA() {  // flag set for motor A when motor stalls
   stalled_A = true;
@@ -239,14 +234,6 @@ void setup() {
   isHomed = false;
   InitStepperA();
   InitStepperE();
-
-  // while(1)
-  // {
-  //    setBusy() ;
-  //   delay(2000);
-  //   resetBusy();
-  //   delay(2000);
-  // }
 }
 
 void home() {
@@ -268,7 +255,6 @@ void home() {
   }
 
   driverA.rms_current(A_HOMING_CURRENT);
-  //digitalWrite(A_DIR_PIN, LOW);
   int count = 0;
   int result = 0;
   driverA.shaft(false);
@@ -303,13 +289,6 @@ void home() {
 
   detachInterrupt(digitalPinToInterrupt(A_STALL_PIN));
   parked = false;
-  // if (isHomed) {
-  //   int loadedFilament = GetLoadedLilament();
-  //   if (loadedFilament >= 0) {
-  //     ToolSelect(loadedFilament);
-  //     parkToolHead();
-  //   }
-  // }
   Serial.println("Homing End");
 }
 
@@ -341,7 +320,6 @@ float MoveE(float extrude_mm, bool slow = false) {
 
   pending = pending - stepsToExtrude;
 
-  //driverE.rms_current(E_CURRENT);  // mA
   digitalWrite(E_EN_PIN, LOW);
   if (selectedTool == 0 || selectedTool == 1) {
     extrude_mm = -1 * stepsToExtrude;
@@ -387,7 +365,6 @@ int GetLoadedLilament() {
       MoveE(mmu_setting.filamentEncoderDetectionLength * 3.5 * EXTRUDER_DIRECTION, true);
       delay(5);
     }
-    //yield();
     Serial.print("Tool: ");
     Serial.print(i);
     Serial.print("Encoder Count: ");
@@ -426,19 +403,19 @@ void ToolSelect(int toolNumber) {
   }
   switch (toolNumber) {
     case 0:
-      MoveA(APosition);  //clk
+      MoveA(APosition);
       selectedTool = 0;
       break;
     case 1:
-      MoveA(APosition - (150 * A_MICROSTEP));  //clk
+      MoveA(APosition - (150 * A_MICROSTEP));
       selectedTool = 1;
       break;
     case 2:
-      MoveA(APosition - (100 * A_MICROSTEP));  //ant-clk
+      MoveA(APosition - (100 * A_MICROSTEP));
       selectedTool = 2;
       break;
     case 3:
-      MoveA(APosition - (50 * A_MICROSTEP));  //ant-clk
+      MoveA(APosition - (50 * A_MICROSTEP));
       selectedTool = 3;
       break;
   }
@@ -459,9 +436,9 @@ void parkToolHead() {
   Serial.print("Parking Tool: ");
   Serial.println(selectedTool);
   if (selectedTool == 1 || selectedTool == 2) {
-    MoveA(100 * A_MICROSTEP);  //clk 25
+    MoveA(100 * A_MICROSTEP); 
   } else {
-    MoveA(-100 * A_MICROSTEP);  //clk 25
+    MoveA(-100 * A_MICROSTEP);
   }
   parked = true;
 }
@@ -487,8 +464,6 @@ void unParkToolHead() {
   }
   parked = false;
 }
-
-
 
 void MoveA(int position) {
   Serial.print("APosition Full Step: ");
@@ -528,7 +503,6 @@ void UnloadTillSwitch() {
   if (unloadDistance == 0) {
     Serial.println("error: UnloadTillSwitch()");
     error = true;
-    //error
   }
 }
 
@@ -647,23 +621,6 @@ void LoadFilament() {
   }
 }
 
-// void LoadFilament() {
-//   if (LoadTillSwitch()) {
-//     encoderCounter = 0;
-//     int expectedEncoderCount = (mmu_setting.distanceFromSwitchToHead / FILAMENT_ENCODER_DETECTION_LENGTH);
-//     MoveE(mmu_setting.distanceFromSwitchToHead * EXTRUDER_DIRECTION);
-//     if (encoderCounter < expectedEncoderCount) {
-//       error = true;
-//       Serial.print("error: LoadFilament() Expected :");
-//       Serial.print(expectedEncoderCount);
-//       Serial.print(" Actual :");
-//       Serial.println(encoderCounter);
-//     }
-//     unloadStatus = 0;
-//   }
-// }
-
-
 void loop() {
   if (Serial.available() > 0) {
     error = false;
@@ -674,15 +631,10 @@ void loop() {
     driverA.rms_current(A_CURRENT);  // mA
     delay(100);
     Serial.println(input);
-    //check Homing
-    // if (!isHomed) {
-    //   home();
-    // }
 
     if (startCommandCode == 'G') {
       //G-Code
       int gCode = extractCodeInt(input, "(G)(%d+)");
-      //Serial.println(gCode);
       if (gCode == 28) {
         //G28 Home
         home();
