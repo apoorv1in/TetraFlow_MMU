@@ -189,8 +189,9 @@ double extractCodeDouble(String input, String pattern) {
   return -1;  // or any other default value
 }
 
-long encoderCounter;
+volatile long encoderCounter;
 void EncoderStepCount() {
+  //Serial.println("E,");
   encoderCounter++;
 }
 
@@ -225,9 +226,10 @@ void setup() {
   FastLED.show();
   while (!TMC_SERIAL) {}
 
-  pinMode(FILAMENT_SENSOR_SWITCH_PIN, INPUT_PULLDOWN);
+  pinMode(FILAMENT_SENSOR_SWITCH_PIN, INPUT_PULLUP);
   pinMode(FILAMENT_ENCODER_PIN, INPUT_PULLUP);
   pinMode(BUSY_STATUS_PIN, OUTPUT);  //pull up present on pin
+  attachInterrupt(digitalPinToInterrupt(FILAMENT_SENSOR_SWITCH_PIN), ISR_filamentSwitch, CHANGE);
 
   attachInterrupt(digitalPinToInterrupt(FILAMENT_ENCODER_PIN), EncoderStepCount, FALLING);
 
@@ -292,6 +294,14 @@ void home() {
   Serial.println("Homing End");
 }
 
+void ISR_filamentSwitch() {
+  Serial.print("filament switch state: ");
+  if (digitalRead(FILAMENT_SENSOR_SWITCH_PIN)) {
+    Serial.println("HIGH");
+  } else {
+    Serial.println("LOW");
+  }
+}
 
 float MoveE(float extrude_mm, bool slow = false) {
 
@@ -349,27 +359,28 @@ float MoveE(float extrude_mm, bool slow = false) {
 }
 
 int GetLoadedLilament() {
+  ISR_filamentSwitch();
   if (!digitalRead(FILAMENT_SENSOR_SWITCH_PIN)) {
     return -1;  //No Filament loaded
   }
   for (int i = 0; i < NumberOfTools; i++) {
     ToolSelect(i);
     encoderCounter = 0;
-    MoveE(-mmu_setting.filamentEncoderDetectionLength * 3.5 * EXTRUDER_DIRECTION, true);
+    MoveE(-mmu_setting.filamentEncoderDetectionLength * 4 * EXTRUDER_DIRECTION, true);
     delay(5);
-    MoveE(mmu_setting.filamentEncoderDetectionLength * 3.5 * EXTRUDER_DIRECTION, true);
+    MoveE(mmu_setting.filamentEncoderDetectionLength * 4 * EXTRUDER_DIRECTION, true);
     delay(5);
     if (encoderCounter != 0) {
-      MoveE(-mmu_setting.filamentEncoderDetectionLength * 3.5 * EXTRUDER_DIRECTION, true);
+      MoveE(-mmu_setting.filamentEncoderDetectionLength * 4 * EXTRUDER_DIRECTION, true);
       delay(5);
-      MoveE(mmu_setting.filamentEncoderDetectionLength * 3.5 * EXTRUDER_DIRECTION, true);
+      MoveE(mmu_setting.filamentEncoderDetectionLength * 4 * EXTRUDER_DIRECTION, true);
       delay(5);
     }
-    Serial.print("Tool: ");
-    Serial.print(i);
+    Serial.print("Loaded Tool: ");
+    Serial.println(i);
     Serial.print("Encoder Count: ");
     Serial.println(encoderCounter);
-    if (encoderCounter >= 5) {
+    if (encoderCounter >= 2) {
       Serial.print("Active Tool Found: ");
       Serial.println(i);
       loadedFilamentToolNumber = i;
@@ -436,7 +447,7 @@ void parkToolHead() {
   Serial.print("Parking Tool: ");
   Serial.println(selectedTool);
   if (selectedTool == 1 || selectedTool == 2) {
-    MoveA(100 * A_MICROSTEP); 
+    MoveA(100 * A_MICROSTEP);
   } else {
     MoveA(-100 * A_MICROSTEP);
   }
@@ -574,7 +585,7 @@ bool LoadTillSwitch() {
   if (error) {
     return false;
   }
-  int MaxDistance = mmu_setting.distanceFromSwitchToSafeZone + 80;
+  int MaxDistance = mmu_setting.distanceFromSwitchToSafeZone + 200;
   while (!digitalRead(FILAMENT_SENSOR_SWITCH_PIN) && MaxDistance > 0) {
     MaxDistance += MoveE(2 * EXTRUDER_DIRECTION);
     MaxDistance -= 2;
