@@ -610,19 +610,26 @@ void LoadFilament() {
     MoveE(mmu_setting.distanceFromSwitchToHead * EXTRUDER_DIRECTION);
     int oldEncoderVal = encoderCounter;
     while (encoderCounter <= expectedEncoderCount) {
-      MoveE(FILAMENT_ENCODER_DETECTION_LENGTH + FILAMENT_ENCODER_DETECTION_LENGTH / 2);
+      MoveE(FILAMENT_ENCODER_DETECTION_LENGTH + (FILAMENT_ENCODER_DETECTION_LENGTH / 2.0f));
       if (oldEncoderVal < encoderCounter)  //Moving
       {
         oldEncoderVal = encoderCounter;
       } else {
-        error = true;
-        Serial.println("error: LoadFilament() movement not detected");
-        break;
+        Serial.println("Jam detected");
+        MoveE(FILAMENT_ENCODER_DETECTION_LENGTH + (FILAMENT_ENCODER_DETECTION_LENGTH / 2.0f));  //try one more time
+        if (oldEncoderVal < encoderCounter)                                                     //Moving
+        {
+          oldEncoderVal = encoderCounter;
+        } else {
+          // error = true; //ignore the error
+          Serial.println("error: LoadFilament() movement not detected");
+          break;
+        }
       }
     }
 
-    if (encoderCounter < expectedEncoderCount) {
-      error = true;
+    if (encoderCounter < expectedEncoderCount - 4) { //KEEPING A THRESHOLD OF 4
+      error = true; 
       Serial.print("error: LoadFilament() Expected :");
       Serial.print(expectedEncoderCount);
       Serial.print(" Actual :");
@@ -707,7 +714,7 @@ void loop() {
         }
       }
     } else if (startCommandCode == 'C') {
-      //C-Code
+      //C-Code C[toolNumber] V[revolution 0.0]
       Serial.println("Calibrate");
       int tool = extractCodeInt(input, "(C)(%d+)");
       double rev = extractCodeInt(input, "(V)(-?%d+%.?%d*)");
