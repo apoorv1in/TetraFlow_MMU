@@ -23,6 +23,9 @@ This is the initial design undergoing refinements. The integration code for 3D p
     <img width=500 src="Images/diagram.png" alt="diagram">
 </p>
 
+# Firmware
+Firmware is written for SKR Pico V1.0 and can be ported to different board if required.
+
 **G-Code Commands:**
 
 - `<G28>`: Home command. Calls the `home()` function to home the printer.
