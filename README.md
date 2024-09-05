@@ -61,3 +61,6 @@ This is the initial design undergoing refinements. The integration code for 3D p
 <div align="center">
   <a href="https://www.youtube.com/watch?v=IvIK14vktVs"><img src="https://img.youtube.com/vi/IvIK14vktVs/0.jpg" alt="IMAGE ALT TEXT"></a>
 </div>
+
+# Consider Supporting The Effort
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gbraad)
